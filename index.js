@@ -5,57 +5,116 @@ const PRODUCTS = ["T-Shirt","Pants","Shoes","Shirt","Shit","Socks","Coat","Jacke
 
 class SearchAlgorithm {
 
-    #searchMap = new Map();
-
+    /**
+     * 
+     * @param {string[]} items - Array with no duplicate strings.
+     */
     constructor(items) {
         if(typeof(items) != "object") return;
+        this.items = this.verifierAndFormater(items)
 
-        this.#buildSearch(items);
+        this.#buildSearch(this.items);
+    };
+    
+    /**
+     * @param {string[]} items - Array with no duplicate strings.
+     * @returns {string[]} Array ormated
+     */
+    verifierAndFormater(items){
+        let HashMap = new Map();
+        let formatedItems = []
+        for(const item of items){
+            formatedItems.push(item.toLocaleLowerCase())
+            if(!HashMap.has(item)){
+                HashMap.set(item,0);
+            }else{
+                console.log(item)
+                console.error("[Error] - Duplicated Terms")
+                return [];
+            };
+        }
+
+        return formatedItems;
+    }
+    
+    /** 
+     * - Build a new container. Putting the elements in new "box" ordened by the <letter_pos>° letter in elements 
+     * @param {String[]} elements - Array with the new elements
+     * @param {number} letter_pos - Position of the letter, which will be used for ordanate the boxes
+     * @returns {Map<string, string>} Return the new Container
+     * */
+    #buildContainer(elements, letter_pos = 0){
+        console.log("Building a new container for: ",elements,"Using the letter pos: ",letter_pos);
+        let newContainer = new Map();
+        
+        elements.map(element => {
+            let keyLetter = element[letter_pos];
+            
+            if(!newContainer.has(keyLetter)){
+                let newBox = new Map();
+                newContainer.set(keyLetter,newBox);
+            };
+            
+            let boxMap = newContainer.get(keyLetter);
+            let actual_index = boxMap.size;
+            
+            boxMap.set(actual_index,element);
+            
+        });
+        
+        console.log(" NewContainer:",  newContainer);
+        return newContainer;
     };
 
-    /**@param {String[]} items */
-    #buildSearch(items){
+
+    /**
+     * - Verify elements in the container 
+     * @param {Map<number,string>} container - The Container 
+     * @param {number} i - the letter will be checked (0 to n-1)
+     * */
+    #verifyElements(container, i) {
+        if(i > 10) return;
         let finished = false;
 
-        /** @returns {Map} */
-        function constructLevel(array, view_index = 0){
-            let newMap = new Map();
-
-            array.map(element => {
-                if(!newMap.has(element[view_index])){
-                    newMap.set(element[view_index],[]);
-                };
-    
-                newMap.get(element[view_index]).push(element);
-            });
-
-            return newMap;
-        }
-
-        function constructOtherLevels(map) {
-            
-        }
-        
-        this.#searchMap = constructLevel(items,0)
-
+        console.log("Verifing the container: ", container);
         while (!finished) {
-            let all_1_op = true
-            this.#searchMap.forEach((value, key)=>{
-                if ((value.length > 1)){
-                    all_1_op = false;
-                    let n = constructLevel(value)
-                    console.log(n)
-                    this.#searchMap.set(key,constructLevel(value,1));
+            let allBoxesWithOneElement = true;
+
+            container.forEach((box, key)=>{
+                if ((box.size > 1) && box.get(0)){
+                    if(box.size == 1) return;
+                    allBoxesWithOneElement = false;
+                    let unpackedBoxArray = [...box.values()];
+                    console.log(i," Conatiner:", container, "Box(",key,") has more than 1 element: ",box);
+                    let newContainer = this.#buildContainer(unpackedBoxArray, i);
+                    container.set(key,this.#verifyElements(newContainer, i + 1));
+
                 }
-                if (all_1_op){
+                if(!box.get(0)) console.log("Container: ",container," is completed!");
+                if (allBoxesWithOneElement){
                     finished = true;
                 }
             })
         }
 
-        console.log(this.#searchMap)
-    };
+        console.log(i, "Container: ", container, "Verified");
+        return container;
+    }
 
+
+    /**
+     * - Build the map for search
+     * @param {String[]} items - Array de items 
+     * @returns {Map<string|number, string|Map}  Returns a SearchMap
+     * */
+    #buildSearch(items){
+        let newSearchMap = new Map();
+
+        newSearchMap = this.#buildContainer(items,0);
+        newSearchMap = this.#verifyElements(newSearchMap, 1);
+
+        console.log(newSearchMap);
+    };
 };
 
 let ClothesSearch = new SearchAlgorithm(PRODUCTS);
