@@ -28,23 +28,26 @@ class SearchAlgorithm {
          * @returns {Map<string, string>} Return the new Container
          * */
         function buildContainer(elements, letter_pos = 0){
+            console.log("Building a new container for: ",elements,"Using the letter pos: ",letter_pos)
             let newContainer = new Map();
             
             elements.map(element => {
                 let keyLetter = element[letter_pos]
+                console.log(" Element:",  element,`${letter_pos+1}° letter: `, keyLetter)
                 
                 if(!newContainer.has(keyLetter)){
                     let newBox = new Map()
                     newContainer.set(keyLetter,newBox);
                 };
-
+                
                 let boxMap = newContainer.get(keyLetter)
                 let actual_index = boxMap.size;
-
+                
                 boxMap.set(actual_index,element)
-
+                
             });
-
+            
+            console.log(" NewContainer:",  newContainer)
             return newContainer;
         }
         
@@ -54,34 +57,36 @@ class SearchAlgorithm {
          * @param {number} i - the letter will be checked (0 to n-1)
          * */
         function verifyElements(container, i) {
-
+            if(i > 10) return;
             let finished = false;
 
+            console.log("Verifing the container: ", container)
             while (!finished) {
                 let allBoxesWithOneElement = true
 
                 container.forEach((box, key)=>{
-                    if (box.size > 1){
+                    if ((box.size > 1) && box.get(0)){
                         if(box.size == 1) return;
                         allBoxesWithOneElement = false;
                         let unpackedBoxArray = [...box.values()]
-                        console.log(i," Conatiner:", container, "Box(",key,"): ",box)
+                        console.log(i," Conatiner:", container, "Box(",key,") has more than 1 element: ",box)
                         let newContainer = buildContainer(unpackedBoxArray, i)
                         container.set(key,verifyElements(newContainer, i + 1));
 
                     }
-
+                    if(!box.get(0)) console.log("Container: ",container," is completed!");
                     if (allBoxesWithOneElement){
                         finished = true;
                     }
                 })
             }
 
+            console.log(i, "Container: ", container, "Verified")
             return container
         }
 
         this.#searchMap = buildContainer(items,0)
-        this.#searchMap = verifyElements(this.#searchMap, 0)
+        this.#searchMap = verifyElements(this.#searchMap, 1)
 
 
         console.log(this.#searchMap)
