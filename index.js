@@ -13,49 +13,79 @@ class SearchAlgorithm {
         this.#buildSearch(items);
     };
 
-    /**@param {String[]} items */
+    /**
+     * - Build the map for search
+     * @param {String[]} items - Array de items 
+     * @returns {Map<string|number, string|Map>}
+     * */
     #buildSearch(items){
-        let finished = false;
-
-        /** @returns {Map} */
-        function constructLevel(array, view_index = 0){
-            let newMap = new Map();
-
-            array.map(element => {
-                if(!newMap.has(element[view_index])){
-                    newMap.set(element[view_index],[]);
+        let n = 1
+        
+        /** 
+         * - Build a new container. Putting the elements in new "box" ordened by the <letter_pos>° letter in elements 
+         * @param {String[]} elements - Array with the new elements
+         * @param {number} letter_pos - Position of the letter, which will be used for ordanate the boxes
+         * @returns {Map<string, string>} Return the new Container
+         * */
+        function buildContainer(elements, letter_pos = 0){
+            let newContainer = new Map();
+            
+            elements.map(element => {
+                let keyLetter = element[letter_pos]
+                
+                if(!newContainer.has(keyLetter)){
+                    let newBox = new Map()
+                    newContainer.set(keyLetter,newBox);
                 };
-    
-                newMap.get(element[view_index]).push(element);
+
+                let boxMap = newContainer.get(keyLetter)
+                let actual_index = boxMap.size;
+
+                boxMap.set(actual_index,element)
+
             });
 
-            return newMap;
-        }
-
-        function constructOtherLevels(map) {
-            
+            return newContainer;
         }
         
-        this.#searchMap = constructLevel(items,0)
+        /**
+         * - Verify elements in the container 
+         * @param {Map<number,string>} container - The Container 
+         * @param {number} i - the letter will be checked (0 to n-1)
+         * */
+        function verifyElements(container, i) {
 
-        while (!finished) {
-            let all_1_op = true
-            this.#searchMap.forEach((value, key)=>{
-                if ((value.length > 1)){
-                    all_1_op = false;
-                    let n = constructLevel(value)
-                    console.log(n)
-                    this.#searchMap.set(key,constructLevel(value,1));
-                }
-                if (all_1_op){
-                    finished = true;
-                }
-            })
+            let finished = false;
+
+            while (!finished) {
+                let allBoxesWithOneElement = true
+
+                container.forEach((box, key)=>{
+                    if (box.size > 1){
+                        if(box.size == 1) return;
+                        allBoxesWithOneElement = false;
+                        let unpackedBoxArray = [...box.values()]
+                        console.log(i," Conatiner:", container, "Box(",key,"): ",box)
+                        let newContainer = buildContainer(unpackedBoxArray, i)
+                        container.set(key,verifyElements(newContainer, i + 1));
+
+                    }
+
+                    if (allBoxesWithOneElement){
+                        finished = true;
+                    }
+                })
+            }
+
+            return container
         }
+
+        this.#searchMap = buildContainer(items,0)
+        this.#searchMap = verifyElements(this.#searchMap, 0)
+
 
         console.log(this.#searchMap)
     };
-
 };
 
 let ClothesSearch = new SearchAlgorithm(PRODUCTS);
