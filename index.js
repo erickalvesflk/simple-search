@@ -1,7 +1,7 @@
 // Ideia 
 // fazer um map, onde cada letra que há nas palavras é uma chave de uma array com outras letras que são chaves para outras...
 
-const PRODUCTS = ["T-Shirt","Pants","Shoes","Shirt","Shit","Shit","Socks","Coat","Jacket"];
+const PRODUCTS = ["T-Shirt","Pants","Shoes","Shirt","Shit","Socks","Coat","Jacket"];
 
 class SearchAlgorithm {
 
@@ -13,21 +13,7 @@ class SearchAlgorithm {
         if(typeof(items) != "object") return;
         this.items = this.verifierAndFormater(items)
 
-        // if(!this.items){
-        //     let d = new Date()
-        //     console.error(`${d.toLocaleDateString()} - [Error]`)
-        // }
-        
         this.#buildSearch(this.items);
-
-    };
-
-    /**
-     * @param {string[]} items - Array with no duplicate strings.
-     * @returns {string[]}}
-     */
-    #formatedArray(items){
-        let result = items.forEach((item_name)=>{item_name.toLocaleLowerCase()})
     };
     
     /**
@@ -38,9 +24,9 @@ class SearchAlgorithm {
         let HashMap = new Map();
         let formatedItems = []
         for(const item of items){
+            formatedItems.push(item.toLocaleLowerCase())
             if(!HashMap.has(item)){
                 HashMap.set(item,0);
-                formatedItems.push(item.toLocaleLowerCase())
             }else{
                 console.log(item)
                 console.error("[Error] - Duplicated Terms")
