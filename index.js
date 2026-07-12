@@ -1,26 +1,73 @@
 // Ideia 
 // fazer um map, onde cada letra que há nas palavras é uma chave de uma array com outras letras que são chaves para outras...
 
-const PRODUCTS = ["T-Shirt","Pants","Shoes","Shirt","Shit","Socks","Coat","Jacket"];
+const PRODUCTS = ["T-Shirt","Pants","Shoes","Shirt","Socker","Coat","Jacket"];
 
 class SearchAlgorithm {
+
+    #searchMap;
 
     /**
      * 
      * @param {string[]} items - Array with no duplicate strings.
+     * @param {boolean} devMode -Actives the logs
      */
-    constructor(items) {
+    constructor(items, devMode = false) {
         if(typeof(items) != "object") return;
-        this.items = this.verifierAndFormater(items)
-
-        this.#buildSearch(this.items);
+        this.devMode = devMode;
+        this.items = this.#verifierAndFormater(items);
+        this.#searchMap = this.#buildSearch(this.items);
     };
+
+    #unpackContainer(container){
+        let unpackedBoxesArray = [];
+        function unpackBoxes(boxes){
+            if(boxes.size == 1){
+                unpackedBoxesArray.push(boxes.get(0));
+                return;
+            };
+            
+            for(const box of boxes){
+                if(box[1].has(0)) {
+                    unpackedBoxesArray.push(box[1].get(0))
+                    continue;
+                }else{
+                    unpackBoxes(box[1]);
+                }
+            }
+        }
+        unpackBoxes(container);
+        return unpackedBoxesArray;
+    };
+
+    /**
+     * 
+     * @param {string} item - item witch will be search
+     */
+    search(item){
+        let formatedItem = item.toLocaleLowerCase();
+        let actualContainer = this.#searchMap;
+
+        for(const letter of formatedItem){
+            if(actualContainer.has(letter)){
+                actualContainer = actualContainer.get(letter);
+                if(actualContainer.has(0)){
+                    // há uma resposta
+                    return [actualContainer.get(0)];
+                };
+
+            };
+        };
+
+        let result = this.#unpackContainer(actualContainer)
+        return result;
+    }
     
     /**
      * @param {string[]} items - Array with no duplicate strings.
      * @returns {string[]} Array ormated
      */
-    verifierAndFormater(items){
+    #verifierAndFormater(items){
         let HashMap = new Map();
         let formatedItems = []
         for(const item of items){
@@ -28,7 +75,6 @@ class SearchAlgorithm {
             if(!HashMap.has(item)){
                 HashMap.set(item,0);
             }else{
-                console.log(item)
                 console.error("[Error] - Duplicated Terms")
                 return [];
             };
@@ -44,7 +90,7 @@ class SearchAlgorithm {
      * @returns {Map<string, string>} Return the new Container
      * */
     #buildContainer(elements, letter_pos = 0){
-        console.log("Building a new container for: ",elements,"Using the letter pos: ",letter_pos);
+        if (this.devMode) console.log("Building a new container for: ",elements,"Using the letter pos: ",letter_pos);
         let newContainer = new Map();
         
         elements.map(element => {
@@ -62,7 +108,7 @@ class SearchAlgorithm {
             
         });
         
-        console.log(" NewContainer:",  newContainer);
+        if (this.devMode) console.log(" NewContainer:",  newContainer);
         return newContainer;
     };
 
@@ -76,7 +122,7 @@ class SearchAlgorithm {
         if(i > 10) return;
         let finished = false;
 
-        console.log("Verifing the container: ", container);
+        if (this.devMode) console.log("Verifing the container: ", container);
         while (!finished) {
             let allBoxesWithOneElement = true;
 
@@ -85,19 +131,19 @@ class SearchAlgorithm {
                     if(box.size == 1) return;
                     allBoxesWithOneElement = false;
                     let unpackedBoxArray = [...box.values()];
-                    console.log(i," Conatiner:", container, "Box(",key,") has more than 1 element: ",box);
+                    if (this.devMode) console.log(i," Conatiner:", container, "Box(",key,") has more than 1 element: ",box);
                     let newContainer = this.#buildContainer(unpackedBoxArray, i);
                     container.set(key,this.#verifyElements(newContainer, i + 1));
 
                 }
-                if(!box.get(0)) console.log("Container: ",container," is completed!");
+                if(!box.get(0) && this.devMode) console.log("Container: ",container," is completed!");
                 if (allBoxesWithOneElement){
                     finished = true;
                 }
             })
         }
 
-        console.log(i, "Container: ", container, "Verified");
+        if (this.devMode) console.log(i, "Container: ", container, "Verified");
         return container;
     }
 
@@ -113,8 +159,10 @@ class SearchAlgorithm {
         newSearchMap = this.#buildContainer(items,0);
         newSearchMap = this.#verifyElements(newSearchMap, 1);
 
-        console.log(newSearchMap);
+        if (this.devMode) console.log(newSearchMap);
+        return newSearchMap
     };
 };
 
 let ClothesSearch = new SearchAlgorithm(PRODUCTS);
+console.log(ClothesSearch.search(""))
