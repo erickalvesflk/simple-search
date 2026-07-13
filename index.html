@@ -4,8 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>simple-search test</title>
+    <script src="https://kit.fontawesome.com/e625421ec6.js" crossorigin="anonymous"></script>
+    <style>
+        @charset "UTF-8";
+        @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+        *{
+            margin: 0px;
+            padding: 0px;
+        }
+        body{
+            width: 100vw;
+            height: 100dvh;
+            font-family: "Figtree", Arial, Helvetica, sans-serif;
+            color: rgb(0, 110, 255);
+            background-image: linear-gradient(90deg,rgb(207, 207, 247),rgb(240, 240, 240));
+        }
+        main{
+            width: inherit;
+            height: inherit;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        #search-bar{
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: center;
+            gap: 10px;
+            width: 80%;
+        }
+        #bar{
+            display: flex;
+            flex-direction: column;
+            width: 80%;
+            position: relative;
+        }
+        input {
+            background-color: rgb(255, 255, 255);
+            border-radius: 20px;
+            border: 0px;
+
+            padding: 10px;
+            font-size: 20px;
+
+            outline: none;
+        }
+        button{
+            background-color: rgb(255, 255, 255);
+        }
+        #recomendation{
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: absolute;
+            box-sizing: border-box;
+            top: 100%;
+            width: 100%;
+            left: 0;
+            background-color: rgb(255, 255, 255);
+            border-radius: 0px 0px 20px 20px;
+            padding: 10px;
+        }
+    </style>
 </head>
 <body>
-    <script src="index.js"></script>
+    <main>
+        <h1>Simple Search</h1>
+        <section id="search-bar">
+            <button><i class="fa-solid fa-magnifying-glass"></i></button>
+            <div id="bar">
+                <input type="text" name="bar-text" id="bar-text">
+                <div id="recomendation">
+                    <p>Hello</p>
+                    <p>Hello</p>
+                    <p>Hello</p>
+                    <p>Hello</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script type="module" src="scripts/index.js"></script>
 </body>
 </html>

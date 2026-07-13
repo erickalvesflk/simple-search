@@ -1,9 +1,7 @@
 // Ideia 
 // fazer um map, onde cada letra que há nas palavras é uma chave de uma array com outras letras que são chaves para outras...
 
-const PRODUCTS = ["T-Shirt","Pants","Shoes","Shirt","Socker","sockera","Coat","Jacket"];
-
-class SearchAlgorithm {
+export default class SearchAlgorithm {
 
     searchMap;
 
@@ -196,7 +194,3 @@ class SearchAlgorithm {
         return newSearchMap
     };
 };
-
-let ClothesSearch = new SearchAlgorithm(PRODUCTS);
-console.log(ClothesSearch.searchMap)
-console.log(ClothesSearch.search("sockera"))
