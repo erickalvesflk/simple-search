@@ -12,12 +12,15 @@
             margin: 0px;
             padding: 0px;
         }
+        h1{
+            font-size: 1.6em;
+        }
         body{
             width: 100vw;
             height: 100dvh;
             font-family: "Figtree", Arial, Helvetica, sans-serif;
             color: rgb(0, 110, 255);
-            background-image: linear-gradient(90deg,rgb(207, 207, 247),rgb(240, 240, 240));
+            background-image: linear-gradient(180deg,rgb(74, 153, 255),rgb(240, 240, 240));
         }
         main{
             width: inherit;
@@ -53,9 +56,18 @@
         }
         button{
             background-color: rgb(255, 255, 255);
+            width: 8%;
+            height: 100%;
+            border-radius: 20px;
+            border: 0px;
+            transition: background-color .15s;
+        }
+        button:hover{
+            background-color: rgb(218, 218, 218);
+            
         }
         #recomendation{
-            display: flex;
+            display: none;
             flex-direction: column;
             gap: 20px;
             position: absolute;
@@ -71,17 +83,12 @@
 </head>
 <body>
     <main>
-        <h1>Simple Search</h1>
+        <h1>Closet Simple Search</h1>
         <section id="search-bar">
             <button><i class="fa-solid fa-magnifying-glass"></i></button>
             <div id="bar">
                 <input type="text" name="bar-text" id="bar-text">
-                <div id="recomendation">
-                    <p>Hello</p>
-                    <p>Hello</p>
-                    <p>Hello</p>
-                    <p>Hello</p>
-                </div>
+                <div id="recomendation"></div>
             </div>
         </section>
     </main>
